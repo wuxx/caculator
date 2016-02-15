@@ -1,7 +1,9 @@
 OBJ=caculator
 
+#CFLAGS = -m32
+
 all:
-	gcc -m32 $(OBJ).c -o $(OBJ)
+	gcc $(CFLAGS) $(OBJ).c -o $(OBJ)
 
 clean:	
 	rm -f $(OBJ)
