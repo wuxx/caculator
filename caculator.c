@@ -131,6 +131,30 @@ int factor()
 
 int term()
 {
+    int sum = 0;
+    struct __token__ *ptoken;
+
+    sum = term();
+
+    while (1) {
+        ptoken = get_token();
+        switch (ptoken->type) {
+            case (TOKEN_MUL):
+                sum *= factor();
+                break;
+            case (TOKEN_DIV):
+                sum /= factor();
+                break;
+            case (TOKEN_INVALD):
+                error();
+                break;
+            defualt:
+                error();
+                break;
+        }
+    }
+
+    return sum;
 }
 
 int expr(char *exp)
@@ -144,8 +168,10 @@ int expr(char *exp)
         ptoken = get_token();
         switch (ptoken->type) {
             case (TOKEN_PLUS):
+                sum += term();
                 break;
             case (TOKEN_MINUS):
+                sum -= term();
                 break;
             case (TOKEN_INVALD):
                 error();
