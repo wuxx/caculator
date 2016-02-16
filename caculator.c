@@ -89,18 +89,44 @@ int parse_token()
     }
 }
 
-int expect()
+struct __token__ * get_token()
 {
+    static int i = 0;
+    return &token_pool[i++];
+}
+
+int expect(int type)
+{
+    struct __token__ *ptoken = get_token();
+    if (ptoken->type != type) {
+        printf("%d expect %d\n", (ptoken-token_pool)/sizeof(struct __token__), type);
+    }
 
 }
 
-int get_token()
-{
-
-}
+#define error() do {printf("error: [%s][%d]\n", __func__, __LINE__); exit(-1);} while(0)
 
 int factor()
 {
+    int s;
+    struct __token__ *ptoken;
+    ptoken = get_token();
+    switch (ptoken->type) {
+        case (TOKEN_INTEGER):
+            s = ptoken->value;
+            break;
+        case (TOKEN_LPAREN):
+            s = expr();
+            expect(TOKEN_RPAREN);
+            break;
+        case (TOKEN_RPAREN):
+            error();
+            break;
+        default:
+            error();
+            break;
+    }
+
 }
 
 int term()
@@ -110,6 +136,25 @@ int term()
 int expr(char *exp)
 {
     int sum = 0;
+    struct __token__ *ptoken;
+
+    sum = term();
+
+    while (1) {
+        ptoken = get_token();
+        switch (ptoken->type) {
+            case (TOKEN_PLUS):
+                break;
+            case (TOKEN_MINUS):
+                break;
+            case (TOKEN_INVALD):
+                error();
+                break;
+            defualt:
+                error();
+                break;
+        }
+    }
 
     return sum;
 }
