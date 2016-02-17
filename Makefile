@@ -2,7 +2,7 @@ OBJ=caculator
 
 #CFLAGS = -m32
 
-all:
+all: clean
 	gcc $(CFLAGS) $(OBJ).c -o $(OBJ)
 
 clean:	

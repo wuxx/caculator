@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #define POOL_SIZE (1024)
+#define PRINT_STAMP() printf("[%s][%d]\n", __func__, __LINE__)
 
 enum TOKEN_E {
     TOKEN_INVALD = 0,
@@ -16,6 +17,18 @@ enum TOKEN_E {
     TOKEN_MAX,
 };
 
+char *token_desc[] = {
+    "TOKEN_INVALD",
+    "TOKEN_INTEGER",
+    "TOKEN_PLUS",
+    "TOKEN_MINUS",
+    "TOKEN_MUL",
+    "TOKEN_DIV",
+    "TOKEN_LPAREN",
+    "TOKEN_RPAREN",
+    "TOKEN_MAX",
+};
+
 struct __token__ {
     int type;
     int value;
@@ -23,7 +36,7 @@ struct __token__ {
 
 struct __token__ token_pool[POOL_SIZE];
 char *expression;
-
+int token_index = 0;
 char get_char()
 {
     static int i = 0;
@@ -91,8 +104,14 @@ int parse_token()
 
 struct __token__ * get_token()
 {
-    static int i = 0;
-    return &token_pool[i++];
+    printf("in %s get %s \n", __func__, token_desc[token_pool[token_index].type]);
+    return &token_pool[token_index++];
+}
+
+int put_token()
+{
+    token_index -- ;
+    return 0;
 }
 
 int expect(int type)
@@ -108,19 +127,20 @@ int expect(int type)
 
 int factor()
 {
-    int s;
+    int sum;
     struct __token__ *ptoken;
     ptoken = get_token();
     switch (ptoken->type) {
         case (TOKEN_INTEGER):
-            s = ptoken->value;
+            PRINT_STAMP();
+            sum = ptoken->value;
+            printf("in %s sum : %d", __func__, sum);
+            PRINT_STAMP();
+            return sum;
             break;
         case (TOKEN_LPAREN):
-            s = expr();
+            sum = expr();
             expect(TOKEN_RPAREN);
-            break;
-        case (TOKEN_RPAREN):
-            error();
             break;
         default:
             error();
@@ -134,7 +154,7 @@ int term()
     int sum = 0;
     struct __token__ *ptoken;
 
-    sum = term();
+    sum = factor();
 
     while (1) {
         ptoken = get_token();
@@ -146,10 +166,11 @@ int term()
                 sum /= factor();
                 break;
             case (TOKEN_INVALD):
-                error();
+                return sum;
                 break;
-            defualt:
-                error();
+            default:
+                put_token();
+                return sum;
                 break;
         }
     }
@@ -161,20 +182,25 @@ int expr(char *exp)
 {
     int sum = 0;
     struct __token__ *ptoken;
-
+    PRINT_STAMP();
     sum = term();
+    printf("sum: %d\n", sum);
+    PRINT_STAMP();
 
     while (1) {
         ptoken = get_token();
         switch (ptoken->type) {
             case (TOKEN_PLUS):
+                PRINT_STAMP();
                 sum += term();
+                PRINT_STAMP();
                 break;
             case (TOKEN_MINUS):
                 sum -= term();
                 break;
             case (TOKEN_INVALD):
-                error();
+                PRINT_STAMP();
+                return sum;
                 break;
             defualt:
                 error();
@@ -182,7 +208,6 @@ int expr(char *exp)
         }
     }
 
-    return sum;
 }
 
 int main(int argc, char **argv)
