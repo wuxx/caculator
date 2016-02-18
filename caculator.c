@@ -82,13 +82,13 @@ int parse_token()
                 memset(num, 0, sizeof(num));
                 j = 0;
                 num[j++] = c;
-                c = get_char();
                 while(c >= '0' && c <= '9') {
                     c = get_char();
                     num[j++] = c;
                 }
                 token_pool[i].type    = TOKEN_INTEGER;
                 token_pool[i++].value = atoi(num);
+                printf("11111111111111 %s [%s] %d \n", __func__, num, token_pool[i-1].value);
                 /**/
                 break;
             case ('\0'):
@@ -104,12 +104,13 @@ int parse_token()
 
 struct __token__ * get_token()
 {
-    printf("in %s get %s \n", __func__, token_desc[token_pool[token_index].type]);
+    printf("in %s get %s %d\n", __func__, token_desc[token_pool[token_index].type], token_pool[token_index].value);
     return &token_pool[token_index++];
 }
 
 int put_token()
 {
+    printf("in %s \n", __func__);
     token_index -- ;
     return 0;
 }
@@ -134,13 +135,15 @@ int factor()
         case (TOKEN_INTEGER):
             PRINT_STAMP();
             sum = ptoken->value;
-            printf("in %s sum : %d", __func__, sum);
+            printf("in1 %s sum : %d\n", __func__, sum);
             PRINT_STAMP();
             return sum;
             break;
         case (TOKEN_LPAREN):
             sum = expr();
+            printf("in2 %s sum : %d\n", __func__, sum);
             expect(TOKEN_RPAREN);
+            return sum;
             break;
         default:
             error();
@@ -154,7 +157,11 @@ int term()
     int sum = 0;
     struct __token__ *ptoken;
 
+    PRINT_STAMP();
     sum = factor();
+    printf("in %s sum: %d\n", __func__, sum);
+    PRINT_STAMP();
+
 
     while (1) {
         ptoken = get_token();
@@ -193,6 +200,7 @@ int expr(char *exp)
             case (TOKEN_PLUS):
                 PRINT_STAMP();
                 sum += term();
+                printf("in %s sum: %d\n", __func__, sum);
                 PRINT_STAMP();
                 break;
             case (TOKEN_MINUS):
@@ -202,8 +210,9 @@ int expr(char *exp)
                 PRINT_STAMP();
                 return sum;
                 break;
-            defualt:
-                error();
+            default:
+                put_token();
+                return sum;
                 break;
         }
     }
