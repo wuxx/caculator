@@ -2,41 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define POOL_SIZE (1024)
-#define PRINT_STAMP() printf("[%s][%d]\n", __func__, __LINE__)
-
-enum TOKEN_E {
-    TOKEN_INVALD = 0,
-    TOKEN_INTEGER,
-    TOKEN_PLUS,
-    TOKEN_MINUS,
-    TOKEN_MUL,
-    TOKEN_DIV,
-    TOKEN_LPAREN,
-    TOKEN_RPAREN,
-    TOKEN_MAX,
-};
-
-char *token_desc[] = {
-    "TOKEN_INVALD",
-    "TOKEN_INTEGER",
-    "TOKEN_PLUS",
-    "TOKEN_MINUS",
-    "TOKEN_MUL",
-    "TOKEN_DIV",
-    "TOKEN_LPAREN",
-    "TOKEN_RPAREN",
-    "TOKEN_MAX",
-};
-
-struct __token__ {
-    int type;
-    int value;
-};
+#include "caculator.h"
 
 struct __token__ token_pool[POOL_SIZE];
 char *expression;
 int token_index = 0;
+
 char get_char()
 {
     static int i = 0;
@@ -50,7 +21,7 @@ int parse_token()
     char num[11];
     c = get_char();
     while(1) {
-        printf("get [%c] \n", c);
+        DEBUG("get [%c] \n", c);
 
         switch (c) {
             case ('+'):
@@ -88,7 +59,7 @@ int parse_token()
                 }
                 token_pool[i].type    = TOKEN_INTEGER;
                 token_pool[i++].value = atoi(num);
-                printf("11111111111111 %s [%s] %d \n", __func__, num, token_pool[i-1].value);
+                DEBUG("[%s] %d \n", num, token_pool[i-1].value);
                 /**/
                 break;
             case ('\0'):
@@ -104,13 +75,13 @@ int parse_token()
 
 struct __token__ * get_token()
 {
-    printf("in %s get %s %d\n", __func__, token_desc[token_pool[token_index].type], token_pool[token_index].value);
+    DEBUG("get %s %d\n", token_desc[token_pool[token_index].type], token_pool[token_index].value);
     return &token_pool[token_index++];
 }
 
 int put_token()
 {
-    printf("in %s \n", __func__);
+    DEBUG("\n");
     token_index -- ;
     return 0;
 }
@@ -124,7 +95,6 @@ int expect(int type)
 
 }
 
-#define error() do {printf("error: [%s][%d]\n", __func__, __LINE__); exit(-1);} while(0)
 
 int factor()
 {
@@ -135,13 +105,13 @@ int factor()
         case (TOKEN_INTEGER):
             PRINT_STAMP();
             sum = ptoken->value;
-            printf("in1 %s sum : %d\n", __func__, sum);
+            DEBUG("sum : %d\n", sum);
             PRINT_STAMP();
             return sum;
             break;
         case (TOKEN_LPAREN):
             sum = expr();
-            printf("in2 %s sum : %d\n", __func__, sum);
+            DEBUG("%s sum : %d\n", sum);
             expect(TOKEN_RPAREN);
             return sum;
             break;
@@ -159,7 +129,7 @@ int term()
 
     PRINT_STAMP();
     sum = factor();
-    printf("in %s sum: %d\n", __func__, sum);
+    DEBUG("sum: %d\n", sum);
     PRINT_STAMP();
 
 
@@ -185,13 +155,13 @@ int term()
     return sum;
 }
 
-int expr(char *exp)
+int expr_dc()
 {
     int sum = 0;
     struct __token__ *ptoken;
     PRINT_STAMP();
     sum = term();
-    printf("sum: %d\n", sum);
+    DEBUG("sum: %d\n", sum);
     PRINT_STAMP();
 
     while (1) {
@@ -200,7 +170,7 @@ int expr(char *exp)
             case (TOKEN_PLUS):
                 PRINT_STAMP();
                 sum += term();
-                printf("in %s sum: %d\n", __func__, sum);
+                DEBUG("sum: %d\n", sum);
                 PRINT_STAMP();
                 break;
             case (TOKEN_MINUS):
@@ -216,7 +186,14 @@ int expr(char *exp)
                 break;
         }
     }
+}
 
+int expr()
+{
+    /* decline recursive analysis */
+    return expr_dc();
+    /* precedence climbing */
+    /* expr_pc(); */
 }
 
 int main(int argc, char **argv)
@@ -234,10 +211,10 @@ int main(int argc, char **argv)
         token_pool[i].type = TOKEN_INVALD;
     }
 
-    printf("expr: %s\n", expression);
+    DEBUG("expr: %s\n", expression);
     parse_token();
 
-    sum = expr(expression);
+    sum = expr();
     printf("sum: %d\n", sum);
     return 0;
 }
