@@ -73,7 +73,7 @@ int parse_token()
     }
 }
 
-struct __token__ * get_token()
+struct __token__ * get_next_token()
 {
     DEBUG("get %s %d\n", token_desc[token_pool[token_index].type], token_pool[token_index].value);
     return &token_pool[token_index++];
@@ -88,7 +88,7 @@ int put_token()
 
 int expect(int type)
 {
-    struct __token__ *ptoken = get_token();
+    struct __token__ *ptoken = get_next_token();
     if (ptoken->type != type) {
         printf("%d expect %d\n", (ptoken-token_pool)/sizeof(struct __token__), type);
     }
@@ -100,7 +100,7 @@ int factor()
 {
     int sum;
     struct __token__ *ptoken;
-    ptoken = get_token();
+    ptoken = get_next_token();
     switch (ptoken->type) {
         case (TOKEN_INTEGER):
             PRINT_STAMP();
@@ -134,7 +134,7 @@ int term()
 
 
     while (1) {
-        ptoken = get_token();
+        ptoken = get_next_token();
         switch (ptoken->type) {
             case (TOKEN_MUL):
                 sum *= factor();
@@ -165,7 +165,7 @@ int expr_dc()
     PRINT_STAMP();
 
     while (1) {
-        ptoken = get_token();
+        ptoken = get_next_token();
         switch (ptoken->type) {
             case (TOKEN_PLUS):
                 PRINT_STAMP();
