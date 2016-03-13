@@ -26,7 +26,8 @@ struct __operator__ operator[] = {
 };
 
 /* point to current token */
-struct __token__ *ptoken;
+struct __token__    * ptoken;
+struct __operator__ * pop;
 
 int __expr__(int op, int l, int r)
 {
@@ -51,11 +52,6 @@ int __expr__(int op, int l, int r)
     return sum;
 }
 
-int expr_left_operand()
-{
-    return 0;
-}
-
 struct __operator__ * get_op(int type)
 {
     int i;
@@ -69,6 +65,27 @@ struct __operator__ * get_op(int type)
     return NULL;
 }
 
+int expr_left_operand()
+{
+    int ret = 0;
+
+    if (ptoken->type == TOKEN_LPAREN) {
+
+        ptoken = get_next_token();
+        ret = __expr_pc(1);
+        ptoken = get_next_token();
+        if (ptoken->type != TOKEN_LPAREN) {
+            error();
+        }
+
+    } else if (ptoken->type == TOKEN_INTEGER) {
+        ret = ptoken->value;
+        ptoken = get_next_token();
+    }
+
+    return ret;
+}
+
 int __expr_pc(int min_prec)
 {
 
@@ -76,7 +93,6 @@ int __expr_pc(int min_prec)
     int left,right;
     int prec, next_prec;
     int assoc;
-    struct __operator__ * pop;
 
     left = expr_left_operand();
 
