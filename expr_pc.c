@@ -65,25 +65,39 @@ struct __operator__ * get_op(int type)
     return NULL;
 }
 
+int is_op(int type)
+{
+    int i;
+    for(i=0;i<(sizeof(operator)/sizeof(operator));i++) {
+        if (type == operator[i].type) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 int expr_left_operand()
 {
-    int ret = 0;
+    int sum = 0;
 
     if (ptoken->type == TOKEN_LPAREN) {
 
         ptoken = get_next_token();
-        ret = __expr_pc(1);
+        sum = __expr_pc(1);
         ptoken = get_next_token();
         if (ptoken->type != TOKEN_LPAREN) {
             error();
         }
 
     } else if (ptoken->type == TOKEN_INTEGER) {
-        ret = ptoken->value;
+        sum = ptoken->value;
         ptoken = get_next_token();
+    } else {
+        error();
     }
 
-    return ret;
+    return sum;
 }
 
 int __expr_pc(int min_prec)
@@ -97,6 +111,14 @@ int __expr_pc(int min_prec)
     left = expr_left_operand();
 
     while (1) {
+
+        if (ptoken->type == TOKEN_INVALD) {
+            break;
+        }
+
+        if (!is_op(ptoken->type)) {
+            error();
+        }
 
         pop   = get_op(ptoken->type);
         prec  = pop->prec;
@@ -115,10 +137,12 @@ int __expr_pc(int min_prec)
 
         ptoken = get_next_token();
 
-        right = __expr_pc(next_prec);
+        right  = __expr_pc(next_prec);
 
-        left  = __expr__(op, left, right);
+        left   = __expr__(op, left, right);
     }
+
+    return left;
 }
 
 int expr_pc()
