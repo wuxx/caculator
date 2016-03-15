@@ -46,6 +46,7 @@ int __expr__(int op, int l, int r)
             sum = l / r;
             break;
         default:
+            printf("%d \n", op);
             error();
     }
 
@@ -86,7 +87,7 @@ int expr_left_operand()
         ptoken = get_next_token();
         sum = __expr_pc(1);
         ptoken = get_next_token();
-        if (ptoken->type != TOKEN_LPAREN) {
+        if (ptoken->type != TOKEN_RPAREN) {
             error();
         }
 
@@ -109,17 +110,16 @@ int __expr_pc(int min_prec)
     int assoc;
 
     left = expr_left_operand();
+    DEBUG("left: %d \n", left);
 
     while (1) {
 
-        if (ptoken->type == TOKEN_INVALD) {
+        if (ptoken->type == TOKEN_INVALD ||
+            !is_op(ptoken->type)) {
             break;
         }
 
-        if (!is_op(ptoken->type)) {
-            error();
-        }
-
+        op    = ptoken->type;
         pop   = get_op(ptoken->type);
         prec  = pop->prec;
         assoc = pop->as;
@@ -133,11 +133,11 @@ int __expr_pc(int min_prec)
         } else {
             next_prec = prec;
         }
-        
 
         ptoken = get_next_token();
 
         right  = __expr_pc(next_prec);
+        DEBUG("right: %d \n", right);
 
         left   = __expr__(op, left, right);
     }
@@ -147,7 +147,7 @@ int __expr_pc(int min_prec)
 
 int expr_pc()
 {
-
+    PRINT_STAMP();
     ptoken = get_next_token();
     return __expr_pc(1);
 }

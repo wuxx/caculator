@@ -4,9 +4,21 @@
 
 #include "caculator.h"
 
+char * token_desc[] = {
+    "TOKEN_INVALD",
+    "TOKEN_INTEGER",
+    "TOKEN_PLUS",
+    "TOKEN_MINUS",
+    "TOKEN_MUL",
+    "TOKEN_DIV",
+    "TOKEN_LPAREN",
+    "TOKEN_RPAREN",
+    "TOKEN_MAX",
+};
+
 struct __token__ token_pool[POOL_SIZE];
 char *expression;
-int token_index = 0;
+int tk_index = 0;
 
 char get_char()
 {
@@ -75,14 +87,14 @@ int parse_token()
 
 struct __token__ * get_next_token()
 {
-    DEBUG("get %s %d\n", token_desc[token_pool[token_index].type], token_pool[token_index].value);
-    return &token_pool[token_index++];
+    DEBUG("get %s [%d] \n", token_desc[token_pool[tk_index].type], token_pool[tk_index].value);
+    return &token_pool[tk_index++];
 }
 
 int put_token()
 {
     DEBUG("\n");
-    token_index -- ;
+    tk_index -- ;
     return 0;
 }
 
@@ -191,9 +203,9 @@ int expr_dc()
 int expr()
 {
     /* decline recursive analysis */
-    return expr_dc();
+    /* return expr_dc(); */
     /* precedence climbing */
-    /* expr_pc(); */
+    return expr_pc();
 }
 
 int main(int argc, char **argv)

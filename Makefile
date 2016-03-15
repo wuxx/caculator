@@ -1,6 +1,7 @@
 OBJ=caculator
 
 #CFLAGS = -m32
+.PHONY: clean
 
 all: clean
 	gcc $(CFLAGS) $(OBJ).c expr_pc.c -o $(OBJ)

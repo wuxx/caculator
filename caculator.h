@@ -7,13 +7,13 @@
 
 #define POOL_SIZE (1024)
 
-#if 0
+#if 1
 #define DEBUG(fmt, ...)     printf("[%s][%d]" fmt,  __func__, __LINE__, ##__VA_ARGS__)
 #else
 #define DEBUG(fmt, ...)
 #endif
 
-#define PRINT_STAMP() DEBUG("")
+#define PRINT_STAMP() DEBUG("\n")
 #define error() do {printf("error: [%s][%d]\n", __func__, __LINE__); exit(-1);} while(0)
 
 enum TOKEN_E {
