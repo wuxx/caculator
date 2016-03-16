@@ -56,7 +56,7 @@ int __expr__(int op, int l, int r)
 struct __operator__ * get_op(int type)
 {
     int i;
-    for(i=0;i<(sizeof(operator)/sizeof(operator));i++) {
+    for(i=0;i<(sizeof(operator)/sizeof(operator[0]));i++) {
         if (type == operator[i].type) {
             return &operator[i];
         }
@@ -69,7 +69,7 @@ struct __operator__ * get_op(int type)
 int is_op(int type)
 {
     int i;
-    for(i=0;i<(sizeof(operator)/sizeof(operator));i++) {
+    for(i=0;i<(sizeof(operator)/sizeof(operator[0]));i++) {
         if (type == operator[i].type) {
             return 1;
         }
@@ -86,10 +86,10 @@ int expr_left_operand()
 
         ptoken = get_next_token();
         sum = __expr_pc(1);
-        ptoken = get_next_token();
         if (ptoken->type != TOKEN_RPAREN) {
             error();
         }
+        ptoken = get_next_token();
 
     } else if (ptoken->type == TOKEN_INTEGER) {
         sum = ptoken->value;
@@ -110,7 +110,7 @@ int __expr_pc(int min_prec)
     int assoc;
 
     left = expr_left_operand();
-    DEBUG("left: %d \n", left);
+    DEBUG("expr_left_operand return: %d \n", left);
 
     while (1) {
 
@@ -141,7 +141,7 @@ int __expr_pc(int min_prec)
 
         left   = __expr__(op, left, right);
     }
-
+    DEBUG("return %d \n", left);
     return left;
 }
 
