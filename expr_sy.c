@@ -7,6 +7,8 @@
 
 #include "caculator.h"
 
+extern int __expr__(int op, int l, int r);
+
 #define STACK_SIZE (1024)
 
 int op_stack[STACK_SIZE];

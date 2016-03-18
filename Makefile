@@ -4,7 +4,7 @@ OBJ=caculator
 .PHONY: clean
 
 all: clean
-	gcc $(CFLAGS) $(OBJ).c expr_pc.c expr_sy.c -o $(OBJ)
+	gcc $(CFLAGS) $(OBJ).c expr_pc.c expr_sy.c expr_sl.c -o $(OBJ)
 
 test:
 	./$(OBJ) "1+2"
