@@ -9,6 +9,11 @@
 
 extern struct __token__ token_pool[POOL_SIZE];
 
+int __expr_sl(int start, int end)
+{
+
+}
+
 int expr_sl()
 {
     int i, len = 0;
@@ -18,4 +23,5 @@ int expr_sl()
             len = i;
         }
     }
+    return __expr_sl(0, len);
 }
