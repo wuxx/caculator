@@ -8,11 +8,12 @@
 #include "caculator.h"
 
 extern int __expr__(int op, int l, int r);
+extern char * token_desc[];
 
 #define STACK_SIZE (1024)
 
 int op_stack[STACK_SIZE];
-int sp = STACK_SIZE - 1;
+int sp = STACK_SIZE;
 
 extern struct __token__ * get_next_token();
 
@@ -25,6 +26,7 @@ void __push(int x)
 {
     sp -- ;
     op_stack[sp] = x;
+    DEBUG("push %d \n", x);
     assert(sp >= 0);
 }
 
@@ -35,6 +37,7 @@ int __pop()
         return -1;
     } else {
         x = op_stack[sp];
+        DEBUG("pop %d \n", x);
         sp ++;
         return x;
     }
@@ -56,6 +59,7 @@ int prio(int type)
         case (TOKEN_RPAREN):
             return 100;
         default:
+            DEBUG("get %d \n", type);
             error();
     }
 }
@@ -64,6 +68,7 @@ int __expr_sy()
 {
     int type;
     while (ptoken->type != TOKEN_INVALD) {
+        DEBUG("get type: %d \n", ptoken->type);
         switch(ptoken->type) {
             case (TOKEN_INTEGER):
                 memcpy(&sy_token_pool[sindex], ptoken, sizeof(struct __token__));
@@ -73,19 +78,28 @@ int __expr_sy()
             case (TOKEN_MINUS):
             case (TOKEN_MUL):
             case (TOKEN_DIV):
+                DEBUG("\n");
                 type = __pop();
-                if (type >= ptoken->type) {
+
+                if (type == -1) {
+                    __push(ptoken->type);
+                    break;
+                }
+
+                if (prio(type) >= prio(ptoken->type)) {
                     while (type >= ptoken->type) {
                         sy_token_pool[sindex].type = type;
                         type = __pop();
                         sindex++;
                     }
-
-                __push(type);
+                    if (type != -1) {
+                        __push(type);
+                    }
                 } else {
                     __push(type);
                     __push(ptoken->type);
                 }
+
                 break;
             case (TOKEN_LPAREN):
                 __push(ptoken->type);
@@ -93,24 +107,35 @@ int __expr_sy()
             case (TOKEN_RPAREN):
                 type = __pop();
                 while (type != TOKEN_LPAREN) {
-                        sy_token_pool[sindex].type = type;
-                        sindex++;
-                        type = __pop();
+                    sy_token_pool[sindex].type = type;
+                    sindex++;
+                    type = __pop();
                 }
                 break;
 
         }
+        ptoken = get_next_token();
     }
+    DEBUG("\n");
     type = __pop();
     while (type != -1) {
         sy_token_pool[sindex].type = type;
+        type = __pop();
         sindex++;
     }
+
+    return 0;
 }
 
 int expr_sy()
 {
+    int i, sum;
     PRINT_STAMP();
     ptoken = get_next_token();
-    return __expr_sy();
+    sum = __expr_sy();
+    DEBUG("\n");
+    for(i=0;sy_token_pool[i].type != TOKEN_INVALD;i++) {
+        printf("[%d]: [%s][%d]\n", i, token_desc[sy_token_pool[i].type], sy_token_pool[i].value);
+    }
+    return 0;
 }

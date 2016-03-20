@@ -205,7 +205,9 @@ int expr()
     /* decline recursive analysis */
     /* return expr_dc(); */
     /* precedence climbing */
-    return expr_pc();
+    /* return expr_pc(); */
+    /* shunting yard */
+    return expr_sy();
 }
 
 int main(int argc, char **argv)
