@@ -17,7 +17,7 @@
 #define error() do {printf("error: [%s][%d]\n", __func__, __LINE__); exit(-1);} while(0)
 
 enum TOKEN_E {
-    TOKEN_INVALD = 0,
+    TOKEN_INVALID = 0,
     TOKEN_INTEGER,
     TOKEN_PLUS,
     TOKEN_MINUS,

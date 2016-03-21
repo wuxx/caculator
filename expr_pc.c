@@ -116,7 +116,7 @@ int __expr_pc(int min_prec)
 
     while (1) {
 
-        if (ptoken->type == TOKEN_INVALD ||
+        if (ptoken->type == TOKEN_INVALID ||
             !is_op(ptoken->type)) {
             break;
         }

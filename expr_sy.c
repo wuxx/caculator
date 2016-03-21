@@ -67,7 +67,7 @@ int prio(int type)
 int __expr_sy()
 {
     int type;
-    while (ptoken->type != TOKEN_INVALD) {
+    while (ptoken->type != TOKEN_INVALID) {
         DEBUG("get type: %d \n", ptoken->type);
         switch(ptoken->type) {
             case (TOKEN_INTEGER):
@@ -134,7 +134,7 @@ int expr_sy()
     ptoken = get_next_token();
     sum = __expr_sy();
     DEBUG("\n");
-    for(i=0;sy_token_pool[i].type != TOKEN_INVALD;i++) {
+    for(i=0;sy_token_pool[i].type != TOKEN_INVALID;i++) {
         printf("[%d]: [%s][%d]\n", i, token_desc[sy_token_pool[i].type], sy_token_pool[i].value);
     }
     return 0;

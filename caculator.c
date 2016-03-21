@@ -5,7 +5,7 @@
 #include "caculator.h"
 
 char * token_desc[] = {
-    "TOKEN_INVALD",
+    "TOKEN_INVALID",
     "TOKEN_INTEGER",
     "TOKEN_PLUS",
     "TOKEN_MINUS",
@@ -154,7 +154,7 @@ int term()
             case (TOKEN_DIV):
                 sum /= factor();
                 break;
-            case (TOKEN_INVALD):
+            case (TOKEN_INVALID):
                 return sum;
                 break;
             default:
@@ -188,7 +188,7 @@ int expr_dc()
             case (TOKEN_MINUS):
                 sum -= term();
                 break;
-            case (TOKEN_INVALD):
+            case (TOKEN_INVALID):
                 PRINT_STAMP();
                 return sum;
                 break;
@@ -222,7 +222,7 @@ int main(int argc, char **argv)
     /* init */
     expression = argv[1];
     for(i=0;i<sizeof(token_pool)/sizeof(token_pool[0]);i++) {
-        token_pool[i].type = TOKEN_INVALD;
+        token_pool[i].type = TOKEN_INVALID;
     }
 
     DEBUG("expr: %s\n", expression);
