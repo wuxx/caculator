@@ -207,7 +207,8 @@ int expr()
     /* precedence climbing */
     /* return expr_pc(); */
     /* shunting yard */
-    return expr_sy();
+    /* return expr_sy(); */
+    return expr_sl();
 }
 
 int main(int argc, char **argv)

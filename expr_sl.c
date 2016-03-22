@@ -24,20 +24,23 @@ static int __expr__(int index, int end)
 {
     int i, j;
     int x, y, sum;
+    DEBUG("%d %d \n", index, end);
     for(i=index-1;i>=0;i--) {
         if (token_pool[i].type != TOKEN_INVALID) {
             assert(token_pool[i].type == TOKEN_INTEGER);
             x = token_pool[i].value;
+            break;
         }
     }
 
-    for(j=index+1;j<end;j--) {
+    for(j=index+1;j<end;j++) {
         if (token_pool[j].type != TOKEN_INVALID) {
             assert(token_pool[j].type == TOKEN_INTEGER);
             y = token_pool[j].value;
+            break;
         }
     }
-
+    DEBUG("%d %d %d \n", token_pool[index].type, x, y);
     switch (token_pool[index].type) {
         case (TOKEN_PLUS):
             sum = x + y;
@@ -53,10 +56,13 @@ static int __expr__(int index, int end)
             break;
     }
 
-    token_pool[index].type = sum;
+    token_pool[index].type  = TOKEN_INTEGER;
+    token_pool[index].value = sum;
+
     token_pool[i    ].type = TOKEN_INVALID;
     token_pool[j    ].type = TOKEN_INVALID;
 
+    DEBUG("return %d \n", sum);
     return sum;
 
 }
@@ -64,6 +70,7 @@ static int __expr__(int index, int end)
 int get_highest_op(int start, int end)
 {
     int i, j = -1;
+    DEBUG("%d %d \n", start, end);
     for(i=start;i<end;i++) {
         if(token_pool[i].type == TOKEN_PLUS  ||
            token_pool[i].type == TOKEN_MINUS ||
@@ -85,8 +92,12 @@ int __expr_sl(int start, int end)
 {
     int i;
     while(1) {
-        if (i = get_highest_op(start, end) != -1) {
+        i = get_highest_op(start, end);
+        if ( i != -1) {
+            DEBUG("i %d \n", i);
             __expr__(i, end);
+        } else {
+            break;
         }
     }
     /* done */
@@ -106,6 +117,7 @@ int expr_sl()
     for(i=0;i<POOL_SIZE;i++) {
         if(token_pool[i].type == TOKEN_INVALID) {
             len = i;
+            break;
         }
     }
     return __expr_sl(0, len);
