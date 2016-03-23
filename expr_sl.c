@@ -40,7 +40,7 @@ static int __expr__(int index, int end)
             break;
         }
     }
-    DEBUG("%d %d %d \n", token_pool[index].type, x, y);
+    DEBUG("type: %d; x: %d; y: %d \n", token_pool[index].type, x, y);
     switch (token_pool[index].type) {
         case (TOKEN_PLUS):
             sum = x + y;
@@ -79,7 +79,7 @@ int get_highest_op(int start, int end)
 
             if (j == -1) j = i;
 
-            if (token_pool[i].type > token_pool[i].type) {
+            if (token_pool[i].type > token_pool[j].type) {
                 j = i;
             }
         }
