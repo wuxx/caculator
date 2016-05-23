@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdarg.h>
 
 #include "caculator.h"
 
@@ -30,6 +31,23 @@ struct __operator__ operator[] = {
 /* point to current token */
 struct __token__    * ptoken;
 struct __operator__ * pop;
+
+int level = 0;
+void level_printf(const char *format, ...)
+{
+    int i;
+    va_list args;
+    static char log_buf[1024];
+
+    for(i=0;i<level;i++) {
+        printf("\t");
+    }
+
+    va_start(args,format);
+    vsnprintf(log_buf,sizeof(log_buf), format, args);
+    va_end(args);
+    printf("%s", log_buf);
+}
 
 int __expr__(int op, int l, int r)
 {
@@ -64,7 +82,7 @@ struct __operator__ * get_op(int type)
         }
     }
 
-    assert(0);
+    error();
     return NULL;
 }
 
@@ -111,13 +129,17 @@ int __expr_pc(int min_prec)
     int prec, next_prec;
     int assoc;
 
+    level ++ ;
     left = expr_left_operand();
-    DEBUG("expr_left_operand return: %d \n", left);
+    level_printf("left: %d \n", left);
 
     while (1) {
 
+        level_printf("__enter__ while\n");
+
         if (ptoken->type == TOKEN_INVALID ||
             !is_op(ptoken->type)) {
+            level_printf("__exit1__ while\n");
             break;
         }
 
@@ -127,6 +149,7 @@ int __expr_pc(int min_prec)
         assoc = pop->as;
 
         if (prec < min_prec) {
+            level_printf("__exit2__ while\n");
             break;
         }
 
@@ -139,11 +162,17 @@ int __expr_pc(int min_prec)
         ptoken = get_next_token();
 
         right  = __expr_pc(next_prec);
-        DEBUG("right: %d \n", right);
+        level_printf("right: %d \n", right);
+
+        level_printf("update left: (%d, %d)", left, right);
 
         left   = __expr__(op, left, right);
+
+        level_printf("-> %d \n", left);
     }
-    DEBUG("return %d \n", left);
+
+    level_printf("return %d \n", left);
+    level -- ;
     return left;
 }
 
