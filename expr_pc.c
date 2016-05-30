@@ -8,7 +8,7 @@
 
 #include "caculator.h"
 
-extern struct __token__ * get_next_token();
+int __expr_pc(int min_prec);
 
 enum ASSOC_E {
     LEFT = 0,
@@ -168,7 +168,7 @@ int __expr_pc(int min_prec)
 
         left   = __expr__(op, left, right);
 
-        level_printf("-> %d \n", left);
+        printf("-> %d \n", left);
     }
 
     level_printf("return %d \n", left);
@@ -178,7 +178,6 @@ int __expr_pc(int min_prec)
 
 int expr_pc()
 {
-    PRINT_STAMP();
     ptoken = get_next_token();
     return __expr_pc(1);
 }

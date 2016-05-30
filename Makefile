@@ -1,10 +1,11 @@
 OBJ=caculator
 
-#CFLAGS = -m32
+#CFLAGS += -m32
+CFLAGS = -Wall
 .PHONY: clean
 
 all: clean
-	gcc $(CFLAGS) $(OBJ).c expr_pc.c expr_sy.c expr_sl.c -o $(OBJ)
+	gcc $(CFLAGS) $(OBJ).c expr_dc.c expr_pc.c expr_sy.c expr_sl.c -o $(OBJ)
 
 test:
 	./$(OBJ) "1+2"

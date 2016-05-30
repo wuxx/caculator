@@ -33,6 +33,10 @@ struct __token__ {
     int value;
 };
 
+struct __token__ * get_next_token();
+int expect(int type);
+int put_token();
+
 extern int expr_pc();
 
 #endif /* __CACULATOR_H__ */

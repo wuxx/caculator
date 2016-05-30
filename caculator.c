@@ -4,6 +4,11 @@
 
 #include "caculator.h"
 
+extern int expr_dc();
+extern int expr_pc();
+extern int expr_sy();
+extern int expr_sl();
+
 char * token_desc[] = {
     "TOKEN_INVALID",
     "TOKEN_INTEGER",
@@ -93,7 +98,7 @@ struct __token__ * get_next_token()
 
 int put_token()
 {
-    DEBUG("\n");
+    DEBUG(" tk_index: %d \n", tk_index);
     tk_index -- ;
     return 0;
 }
@@ -104,109 +109,16 @@ int expect(int type)
     if (ptoken->type != type) {
         printf("%d expect %d\n", (ptoken-token_pool)/sizeof(struct __token__), type);
     }
-
-}
-
-
-int factor()
-{
-    int sum;
-    struct __token__ *ptoken;
-    ptoken = get_next_token();
-    switch (ptoken->type) {
-        case (TOKEN_INTEGER):
-            PRINT_STAMP();
-            sum = ptoken->value;
-            DEBUG("sum : %d\n", sum);
-            PRINT_STAMP();
-            return sum;
-            break;
-        case (TOKEN_LPAREN):
-            sum = expr();
-            DEBUG("%s sum : %d\n", sum);
-            expect(TOKEN_RPAREN);
-            return sum;
-            break;
-        default:
-            error();
-            break;
-    }
-
-}
-
-int term()
-{
-    int sum = 0;
-    struct __token__ *ptoken;
-
-    PRINT_STAMP();
-    sum = factor();
-    DEBUG("sum: %d\n", sum);
-    PRINT_STAMP();
-
-
-    while (1) {
-        ptoken = get_next_token();
-        switch (ptoken->type) {
-            case (TOKEN_MUL):
-                sum *= factor();
-                break;
-            case (TOKEN_DIV):
-                sum /= factor();
-                break;
-            case (TOKEN_INVALID):
-                return sum;
-                break;
-            default:
-                put_token();
-                return sum;
-                break;
-        }
-    }
-
-    return sum;
-}
-
-int expr_dc()
-{
-    int sum = 0;
-    struct __token__ *ptoken;
-    PRINT_STAMP();
-    sum = term();
-    DEBUG("sum: %d\n", sum);
-    PRINT_STAMP();
-
-    while (1) {
-        ptoken = get_next_token();
-        switch (ptoken->type) {
-            case (TOKEN_PLUS):
-                PRINT_STAMP();
-                sum += term();
-                DEBUG("sum: %d\n", sum);
-                PRINT_STAMP();
-                break;
-            case (TOKEN_MINUS):
-                sum -= term();
-                break;
-            case (TOKEN_INVALID):
-                PRINT_STAMP();
-                return sum;
-                break;
-            default:
-                put_token();
-                return sum;
-                break;
-        }
-    }
+    return 0;
 }
 
 int expr()
 {
     /* decline recursive analysis */
-    /* return expr_dc(); */
+    return expr_dc();
 
     /* precedence climbing */
-    return expr_pc();
+    /* return expr_pc(); */
 
     /* shunting yard */
     /* return expr_sy(); */

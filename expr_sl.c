@@ -9,17 +9,6 @@
 
 extern struct __token__ token_pool[POOL_SIZE];
 
-int token_num(int start, int end)
-{
-    int i, num = 0;
-    
-    for(i=0;i<end;i++) {
-        if (token_pool[i].type != TOKEN_INVALID) {
-            num ++ ;
-        }
-    }
-}
-
 static int __expr__(int index, int end)
 {
     int i, j;
@@ -104,9 +93,11 @@ int __expr_sl(int start, int end)
     
     for(i=0;i<end;i++) {
         if (token_pool[i].type == TOKEN_INTEGER) {
-            return token_pool[i].value;
+            break;
         }
     }
+
+    return token_pool[i].value;
 
 }
 

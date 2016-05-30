@@ -137,5 +137,5 @@ int expr_sy()
     for(i=0;sy_token_pool[i].type != TOKEN_INVALID;i++) {
         printf("[%d]: [%s][%d]\n", i, token_desc[sy_token_pool[i].type], sy_token_pool[i].value);
     }
-    return 0;
+    return sum;
 }
